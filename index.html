@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Predicción de Consumo Energético</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.16.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial; text-align: center; margin: 40px; }
+    input { margin: 5px; padding: 8px; width: 150px; }
+    button { padding: 10px 20px; margin-top: 10px; cursor: pointer; }
+    canvas { max-width: 600px; margin: 20px auto; }
+  </style>
+</head>
+<body>
+  <h1>IA - Predicción de Consumo Energético</h1>
+  <p>Simulación de un modelo que aprende a estimar consumo en kWh</p>
+
+  <div>
+    <input id="temp" type="number" placeholder="Temperatura (°C)">
+    <input id="hora" type="number" placeholder="Hora del día (0-23)">
+    <input id="personas" type="number" placeholder="Ocupación (personas)">
+    <input id="dia" type="number" placeholder="Día (1-7)">
+  </div>
+  <button id="predecirBtn">Predecir Consumo</button>
+  
+  <h2 id="resultado">Resultado: -</h2>
+  
+  <canvas id="graficoConsumo"></canvas>
+
+  <script src="app.js"></script>
+</body>
+</html>
