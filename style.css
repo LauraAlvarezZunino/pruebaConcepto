@@ -1,0 +1,112 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
+
+:root {
+  --color-principal: #1B4965;   /* Azul petróleo */
+  --color-secundario: #5FA8D3;  /* Azul claro armónico */
+  --color-acento: #CAE9FF;      /* Azul muy claro / fondo */
+  --color-texto: #222;
+  --color-blanco: #fff;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--color-acento);
+  color: var(--color-texto);
+  text-align: center;
+  margin: 40px;
+  padding: 0;
+}
+
+h1 {
+  color: var(--color-principal);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+p {
+  color: var(--color-secundario);
+  font-weight: 300;
+  margin-bottom: 30px;
+}
+
+div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+input {
+  padding: 10px 15px;
+  border: 2px solid var(--color-secundario);
+  border-radius: 8px;
+  width: 180px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  background-color: var(--color-blanco);
+}
+
+input:focus {
+  border-color: var(--color-principal);
+  outline: none;
+  box-shadow: 0 0 6px rgba(27, 73, 101, 0.3);
+}
+
+button {
+  background-color: var(--color-principal);
+  color: var(--color-blanco);
+  border: none;
+  border-radius: 8px;
+  padding: 12px 25px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+  background-color: var(--color-secundario);
+  transform: scale(1.05);
+}
+
+#resultado {
+  color: var(--color-principal);
+  margin-top: 20px;
+  font-weight: 600;
+}
+
+canvas {
+  max-width: 600px;
+  margin: 30px auto;
+  background-color: var(--color-blanco);
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.contenedor-formulario {
+  background-color: var(--color-blanco);
+  border: 2px solid var(--color-secundario);
+  border-radius: 15px;
+  padding: 30px 20px;
+  max-width: 700px;
+  margin: 0 auto 30px auto;
+  box-shadow: 0 4px 15px rgba(27, 73, 101, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+.contenedor-formulario p {
+  margin-bottom: 25px;
+  color: var(--color-secundario);
+  font-weight: 400;
+}
+
+.contenedor-formulario .inputs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
