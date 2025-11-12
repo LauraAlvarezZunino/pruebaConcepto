@@ -48,23 +48,71 @@ const grafico = new Chart(ctx, {
 document.getElementById("predecirBtn").addEventListener("click", async () => {
   if (!modeloIA) { alert("Modelo aún cargando..."); return; }
 
-  const temp = parseFloat(document.getElementById("temp").value);
+  const ciudad = document.getElementById("ciudad").value.trim();
   const hora = parseFloat(document.getElementById("hora").value);
   const personas = parseFloat(document.getElementById("personas").value);
   const dia = parseFloat(document.getElementById("dia").value);
+
+  if (!ciudad) {
+    alert("Por favor ingresa el nombre de una ciudad.");
+    return;
+  }
+
+  const coords = await obtenerCoordenadas(ciudad);
+  if (!coords) {
+    alert("No se pudo encontrar esa ciudad.");
+    return;
+  }
+
+  const temp = await obtenerTemperatura(coords.lat, coords.lon);
+  if (temp === null) {
+    alert("No se pudo obtener la temperatura actual.");
+    return;
+  }
 
   const entrada = tf.tensor2d([[temp, hora, personas, dia]]);
   const prediccion = modeloIA.predict(entrada);
   const valor = (await prediccion.data())[0].toFixed(2);
 
   document.getElementById("resultado").textContent =
-      `Consumo estimado: ${valor} kWh`;
+    `Ciudad: ${coords.nombre} | Temp: ${temp}°C | Consumo estimado: ${valor} kWh`;
 
-  // Actualizar gráfico
   grafico.data.labels.push(`Día ${dia} - Hora ${hora}`);
   grafico.data.datasets[0].data.push(valor);
   grafico.update();
 });
 
+
 // Explicación para presentación
 console.log("Esta demo muestra cómo la IA puede predecir consumo energético según condiciones ambientales y ocupación, ayudando a optimizar calefacción e iluminación automáticamente.");
+// Obtener temperatura 
+async function obtenerTemperatura(lat, lon) {
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m`;
+    const respuesta = await fetch(url);
+    const datos = await respuesta.json();
+    return datos.current?.temperature_2m ?? null;
+  } catch (error) {
+    console.error("Error al obtener datos del clima:", error);
+    return null;
+  }
+}
+
+// geolocalizacion 
+async function obtenerCoordenadas(ciudad) {
+  try {
+    const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(ciudad)}&count=1`;
+    const respuesta = await fetch(url);
+    const datos = await respuesta.json();
+    
+    if (datos.results && datos.results.length > 0) {
+      const { latitude, longitude, name, country } = datos.results[0];
+      return { lat: latitude, lon: longitude, nombre: `${name}, ${country}` };
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Error al obtener coordenadas:", error);
+    return null;
+  }
+}

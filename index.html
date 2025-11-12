@@ -9,20 +9,35 @@
 </head>
 <body>
   <h1>IA - Predicción de Consumo Energético</h1>
-<div class="contenedor-formulario">
-  <p>Simulación de un modelo que aprende a estimar consumo en kWh</p>
+   <p>Simulación de un modelo que aprende a estimar consumo en kWh según condiciones reales.</p>
+  
+   <div class="contenedor-formulario">
+   
 
-  <div>
-    <input id="temp" type="number" placeholder="Temperatura (°C)">
-    <input id="hora" type="number" placeholder="Hora del día (0-23)">
-    <input id="personas" type="number" placeholder="Ocupación (personas)">
-    <input id="dia" type="number" placeholder="Día (1-7)">
+    <div class="campo">
+      <label for="ciudad">Ciudad</label>
+      <input id="ciudad" type="text" placeholder="Ej. Madrid">
+    </div>
+
+    <div class="campo">
+      <label for="hora">Hora del día (0-23)</label>
+      <input id="hora" type="number" placeholder="Ej. 15" min="0" max="23">
+    </div>
+
+    <div class="campo">
+      <label for="personas">Ocupación (personas)</label>
+      <input id="personas" type="number" placeholder="Ej. 10" min="0">
+    </div>
+
+    <div class="campo">
+      <label for="dia">Día (1-7)</label>
+      <input id="dia" type="number" placeholder="Ej. 3" min="1" max="7">
+    </div>
+
+    <button id="predecirBtn">Predecir Consumo</button>
   </div>
-  <button id="predecirBtn">Predecir Consumo</button>
- </div>
 
   <h2 id="resultado">Resultado: -</h2>
-  
   <canvas id="graficoConsumo"></canvas>
 
   <script src="app.js"></script>

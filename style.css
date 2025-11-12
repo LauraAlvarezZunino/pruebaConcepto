@@ -29,22 +29,62 @@ p {
   margin-bottom: 30px;
 }
 
-div {
+/* === CONTENEDOR PRINCIPAL === */
+.contenedor-formulario {
+  display: flex;
+  flex-direction: column;  /* elementos apilados verticalmente */
+  align-items: center;     /* centra horizontalmente todos los elementos */
+  background-color: var(--color-blanco);
+  border: 2px solid var(--color-secundario);
+  border-radius: 15px;
+  padding: 30px 20px;
+  max-width: 700px;
+  margin: 0 auto 30px auto;
+  box-shadow: 0 4px 15px rgba(27, 73, 101, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.contenedor-formulario p {
+  margin-bottom: 25px;
+  color: var(--color-secundario);
+  font-weight: 400;
+}
+
+/* === CAMPOS DE FORMULARIO === */
+.inputs {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: 15px;
+  justify-content: center; /* centra los bloques de input */
+  gap: 25px;
   margin-bottom: 20px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* <- cambiar de flex-start a center */
+  margin-bottom: 20px;
+  width: 220px;
+  min-width: 180px;
+}
+
+label {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--color-principal);
+  margin-bottom: 6px;
+  text-align: center; /* centra el texto del label */
 }
 
 input {
   padding: 10px 15px;
   border: 2px solid var(--color-secundario);
   border-radius: 8px;
-  width: 180px;
+  width: 100%;
   font-size: 14px;
   transition: all 0.3s ease;
   background-color: var(--color-blanco);
+  text-align: center; /* opcional: centra el texto dentro del input */
 }
 
 input:focus {
@@ -53,6 +93,7 @@ input:focus {
   box-shadow: 0 0 6px rgba(27, 73, 101, 0.3);
 }
 
+/* === BOTÓN === */
 button {
   background-color: var(--color-principal);
   color: var(--color-blanco);
@@ -70,6 +111,7 @@ button:hover {
   transform: scale(1.05);
 }
 
+/* === RESULTADO Y GRÁFICO === */
 #resultado {
   color: var(--color-principal);
   margin-top: 20px;
@@ -83,30 +125,75 @@ canvas {
   border-radius: 10px;
   padding: 15px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
 }
 
-.contenedor-formulario {
-  background-color: var(--color-blanco);
-  border: 2px solid var(--color-secundario);
-  border-radius: 15px;
-  padding: 30px 20px;
-  max-width: 700px;
-  margin: 0 auto 30px auto;
-  box-shadow: 0 4px 15px rgba(27, 73, 101, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+/* === RESPONSIVE DESIGN === */
+
+/* --- Tablets (pantallas medianas) --- */
+@media (max-width: 900px) {
+  body {
+    margin: 20px;
+  }
+
+  .contenedor-formulario {
+    max-width: 90%;
+    padding: 25px 15px;
+  }
+
+  .inputs {
+    gap: 20px;
+  }
+
+  .campo {
+    width: 45%;
+  }
+
+  canvas {
+    max-width: 90%;
+  }
 }
 
+/* --- Teléfonos (pantallas pequeñas) --- */
+@media (max-width: 600px) {
+  body {
+    margin: 15px;
+  }
 
-.contenedor-formulario p {
-  margin-bottom: 25px;
-  color: var(--color-secundario);
-  font-weight: 400;
-}
+  h1 {
+    font-size: 1.4rem;
+  }
 
-.contenedor-formulario .inputs {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 15px;
-  margin-bottom: 20px;
+  p {
+    font-size: 0.9rem;
+  }
+
+  .contenedor-formulario {
+    padding: 20px 10px;
+    width: 100%;
+  }
+
+  .inputs {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .campo {
+    width: 90%;
+  }
+
+  button {
+    width: 100%;
+    max-width: 250px;
+  }
+
+  canvas {
+    width: 95%;
+    padding: 10px;
+  }
+
+  #resultado {
+    font-size: 0.95rem;
+  }
 }
