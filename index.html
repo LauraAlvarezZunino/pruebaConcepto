@@ -9,28 +9,37 @@
 </head>
 <body>
   <h1>IA - Predicción de Consumo Energético</h1>
-<div class="contenedor-formulario">
-  <h3>Datos para predicción</h3>
-  <label>Hora del día: <input type="number" min="0" max="23" id="hora"></label>
-  <label>Día de la semana: 
-      <select id="dia">
-        <option value="1">Lunes</option>
-        <option value="2">Martes</option>
-          <option value="3">Miércoles</option>
-    <option value="4">Jueves</option>
-    <option value="5">Viernes</option>
-    <option value="6">Sábado</option>
-    <option value="7">Domingo</option>
-      </select>
-  </label>
-  <label>Ocupación (personas): <input type="number" min="0" max="50" id="personas"></label>
-  <label>Temperatura (°C, opcional): <input type="number" id="temp" placeholder="Dejar vacío para pronóstico"></label>
-  <button id="predecirBtn">Predecir Consumo</button>
-</div>
 
+  <div class="contenedor-formulario">
+    <p>Simulación de un modelo que aprende a estimar consumo en kWh</p>
+
+    <div class="inputs">
+      <div class="input-group">
+        <input id="hora" type="number" min="0" max="23" required>
+        <label for="hora">Hora del día (0-23)</label>
+      </div>
+      <div class="input-group">
+        <input id="personas" type="number" min="1" max="50" required>
+        <label for="personas">Ocupación (personas)</label>
+      </div>
+      <div class="input-group">
+        <input id="dia" type="number" min="1" max="7" required>
+        <label for="dia">Día (1-7)</label>
+      </div>
+    </div>
+
+    <h2 id="estadoModelo">
+      Cargando modelo... 
+      <div id="spinner"></div>
+    </h2>
+    <div id="barraProgreso"><div>0%</div></div>
+
+    <button id="predecirBtn">Predecir Consumo</button>
+    <button id="borrarHistorialBtn">Borrar Historial</button>
+  </div>
 
   <h2 id="resultado">Resultado: -</h2>
-  
+
   <canvas id="graficoConsumo"></canvas>
 
   <script src="app.js"></script>
