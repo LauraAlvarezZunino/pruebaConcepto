@@ -10,16 +10,24 @@
 <body>
   <h1>IA - Predicción de Consumo Energético</h1>
 <div class="contenedor-formulario">
-  <p>Simulación de un modelo que aprende a estimar consumo en kWh</p>
-
-  <div>
-    <input id="temp" type="number" placeholder="Temperatura (°C)">
-    <input id="hora" type="number" placeholder="Hora del día (0-23)">
-    <input id="personas" type="number" placeholder="Ocupación (personas)">
-    <input id="dia" type="number" placeholder="Día (1-7)">
-  </div>
+  <h3>Datos para predicción</h3>
+  <label>Hora del día: <input type="number" min="0" max="23" id="hora"></label>
+  <label>Día de la semana: 
+      <select id="dia">
+        <option value="1">Lunes</option>
+        <option value="2">Martes</option>
+          <option value="3">Miércoles</option>
+    <option value="4">Jueves</option>
+    <option value="5">Viernes</option>
+    <option value="6">Sábado</option>
+    <option value="7">Domingo</option>
+      </select>
+  </label>
+  <label>Ocupación (personas): <input type="number" min="0" max="50" id="personas"></label>
+  <label>Temperatura (°C, opcional): <input type="number" id="temp" placeholder="Dejar vacío para pronóstico"></label>
   <button id="predecirBtn">Predecir Consumo</button>
- </div>
+</div>
+
 
   <h2 id="resultado">Resultado: -</h2>
   
