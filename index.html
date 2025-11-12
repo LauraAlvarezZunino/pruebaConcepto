@@ -9,11 +9,9 @@
 </head>
 <body>
   <h1>IA - Predicción de Consumo Energético</h1>
-   <p>Simulación de un modelo que aprende a estimar consumo en kWh según condiciones reales.</p>
+  <p>Simulación de un modelo que aprende a estimar consumo en kWh según condiciones reales.</p>
   
-   <div class="contenedor-formulario">
-   
-
+  <div class="contenedor-formulario">
     <div class="campo">
       <label for="ciudad">Ciudad</label>
       <input id="ciudad" type="text" placeholder="Ej. Madrid">
@@ -35,9 +33,14 @@
     </div>
 
     <button id="predecirBtn">Predecir Consumo</button>
+    <button id="limpiarBtn" style="background-color: #5FA8D3;">Limpiar</button>
+
+    <p id="cargando" style="display:none; color: var(--color-secundario); font-weight: 500;">Cargando predicción...</p>
   </div>
 
   <h2 id="resultado">Resultado: -</h2>
+  <p id="mensajeConsumo" style="font-weight: 600;"></p>
+
   <canvas id="graficoConsumo"></canvas>
 
   <script src="app.js"></script>
