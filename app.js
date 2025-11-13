@@ -198,14 +198,13 @@ document.getElementById("predecirBtn").addEventListener("click", async () => {
   document.getElementById("resultado").style.color = color;
   document.getElementById("mensajeConsumo").textContent = mensajeConsumo(valorDiario);
 
-  // Guardar en historial y actualizar gráfico
-  const nuevoDato = { dia, hora, temp, personas, consumo: valorDiario };
-  guardarEnHistorial(nuevoDato);
+  // actualizar gráfico
+ const etiqueta = `${coords.nombre} | ${temp.toFixed(1)}°C | Día ${dia} | Hora ${hora} | ${personas} personas`;
 
-  grafico.data.labels.push(`Día ${dia} - Hora ${hora}`);
-  grafico.data.datasets[0].data.push(valorDiario.toFixed(2));
-  grafico.data.datasets[0].backgroundColor.push(color);
-  grafico.update();
+grafico.data.labels.push(etiqueta);
+grafico.data.datasets[0].data.push(valorDiario.toFixed(2));
+grafico.data.datasets[0].backgroundColor.push(color);
+grafico.update();
 
   entrada.dispose();
   prediccion.dispose();
