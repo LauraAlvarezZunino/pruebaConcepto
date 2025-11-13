@@ -38,7 +38,7 @@ p {
   background-color: var(--color-blanco);
   border: 2px solid var(--color-secundario);
   border-radius: 15px;
-  padding: 10px 5px;
+  padding: 10px 10px;
   max-width: 700px;
   min-height: 500px;         /* 🔹 da altura para que el centrado se note */
   margin: 0 auto 30px auto;
@@ -48,6 +48,7 @@ p {
 /* === CONTENEDOR DE INPUTS Y BOTONES === */
 .inputs {
   display: flex;
+  width: 100%;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;       /* 🔹 centra también verticalmente los inputs */
@@ -66,7 +67,7 @@ p {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 200px;
+  width: 300px;
 }
 
 label {
@@ -174,39 +175,92 @@ canvas {
   transition: width 0.2s ease;
 }
 
-/* === RESPONSIVE === */
-@media (max-width: 700px) {
+
+/* === RESPONSIVE GENERAL === */
+body {
+  margin: 40px;
+}
+
+/* Breakpoint para tablets */
+@media (max-width: 992px) {
   body {
     margin: 20px;
   }
 
   .contenedor-formulario {
-    width: 95%;
-    padding: 20px 10px;
+    max-width: 90%;
+    padding: 20px;
   }
 
-  .inputs {
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
+  input, button {
+    width: 80%;
+    max-width: 350px;
+  }
+
+  canvas {
+    width: 85%;
+  }
+}
+
+/* Breakpoint para celulares grandes */
+@media (max-width: 700px) {
+  body {
+    margin: 15px;
+  }
+
+  .contenedor-formulario {
+    width: 95%;
+    min-height: auto;
+    padding: 20px 20px;
   }
 
   .campo {
-    width: 100%;
+    width: 90%;
   }
 
-  input {
+  input, button {
     width: 90%;
-    max-width: 250px;
-  }
-
-  button {
-    width: 90%;
-    max-width: 250px;
+    max-width: 100%;
+    font-size: 16px;
+    padding: 12px;
   }
 
   canvas {
     width: 95%;
+    max-width: 100%;
     padding: 10px;
+  }
+
+  #barraProgreso {
+    width: 90%;
+  }
+}
+
+/* Breakpoint para celulares muy pequeños */
+@media (max-width: 480px) {
+  body {
+    margin: 10px;
+  }
+
+  h1 {
+    font-size: 1.5em;
+  }
+
+  p {
+    font-size: 0.9em;
+  }
+
+  .contenedor-formulario {
+    width: 100%;
+    padding: 15px 5px;
+    border-width: 1px;
+  }
+
+  input, button {
+    width: 95%;
+  }
+
+  canvas {
+    width: 95%;
   }
 }
