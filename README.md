@@ -1,57 +1,52 @@
-## Flujo del Código: Red Neuronal de Estimación de Consumo
+# Predicción de Consumo Energético con Inteligencia Artificial (Prueba de Concepto)
 
-El proyecto implementa una **Red Neuronal Simple** para predecir el consumo energético (kWh) en un edificio, utilizando datos simulados para la prueba de concepto (PoC).
-
----
-
-### Arquitectura de la Red Neuronal
-
-| Elemento | Descripción | Dimensiones | Activación |
-| :--- | :--- | :--- | :--- |
-| **Entrada (Input)** | Variables predictoras | 4 Neuronas | N/A |
-| **Capa Intermedia 1** | Primera capa oculta | 8 Neuronas | **ReLU** |
-| **Capa Intermedia 2** | Segunda capa oculta | 4 Neuronas | **ReLU** |
-| **Salida (Output)** | Consumo energético estimado | 1 Neurona (kWh) | **Lineal** |
-
-**Variables de Entrada:**
-* **Temperatura**
-* **Hora del Día**
-* **Ocupación** (Número de personas o estado)
-* **Día de la Semana** (o tipo de día)
+Este proyecto demuestra la aplicación práctica de **Inteligencia Artificial** utilizando **TensorFlow.js** para predecir el consumo energético estimado (kWh/día) según variables como la temperatura, hora del día, cantidad de personas y día de la semana.
 
 ---
 
-###  Proceso de Ejecución
+## Descripción general
 
-1.  **Entrenamiento con Datos Simulados:**
-    * Se generan **manualmente** valores de ejemplo (`xs` y `ys`) para la demostración (PoC).
-    * *Nota: En un caso real, estos datos provendrían de **sensores IoT** o **registros históricos** del edificio.*
-2.  **Predicción en Tiempo Real (Simulada):**
-    * El usuario interactúa con la interfaz (navegador) e ingresa **valores actuales** en los campos de entrada.
-    * El modelo previamente entrenado procesa estos valores.
-    * Se genera la **predicción** del consumo esperado.
-3.  **Resultado y Visualización:**
-    * El valor del **consumo estimado** (kWh) se muestra y actualiza en el elemento `<h2>` de la interfaz.
-    * *Uso Potencial: En un escenario real, esta predicción se podría utilizar para realizar **ajustes automáticos** en sistemas como calefacción, iluminación o ventilación.*
+La aplicación:
+1. Obtiene las coordenadas de una ciudad mediante la API de Open-Meteo.
+2. Consulta la temperatura actual del lugar.
+3. Alimenta esos datos junto con los valores ingresados por el usuario al modelo de IA.
+4. El modelo predice el consumo energético estimado.
+5. Muestra el resultado en pantalla y lo guarda en un historial visualizado con Chart.js.
 
 ---
 
-## Posibles Extensiones para un Caso Real (Producción)
+## Tecnologías utilizadas
 
-Para llevar este proyecto a un entorno operativo real, se pueden considerar las siguientes mejoras y ampliaciones:
+- **TensorFlow.js**: librería de JavaScript para construir y entrenar modelos de redes neuronales directamente en el navegador.
+- **Chart.js**: librería para visualización de datos en gráficos dinámicos.
+- **Open-Meteo Geocoding API**: obtiene latitud y longitud a partir del nombre de una ciudad.
+- **Open-Meteo Forecast API**: obtiene temperatura actual y pronóstico.
+- **LocalStorage**: guarda el historial de predicciones localmente.
 
-* **Integración IoT:** Conexión con **sensores reales** para obtener datos de:
-    * Temperatura (interior/exterior)
-    * Luz ambiental
-    * Niveles de ocupación
-    * Consumo eléctrico en tiempo real
-* **Backend y Base de Datos:** Implementación de un sistema de *backend* robusto para:
-    * Almacenar y procesar **grandes volúmenes** de información (datos históricos).
-    * Garantizar la disponibilidad y la calidad de los datos de entrenamiento.
-* **Modelos Avanzados:** Uso de modelos de *Machine Learning* más complejos, entrenados con **datos reales** para mayor precisión:
-    * **Redes Neuronales Profundas (DNN)**
-    * Modelos de **Series de Tiempo** (como **LSTM** o **GRU**)
-    * Modelos de **Regresión Múltiple** avanzados
-* **Módulo de Optimización:** Desarrollo de un componente que actúe sobre la predicción, ofreciendo:
-    * **Recomendaciones** proactivas al gestor del edificio.
-    * **Ajustes automáticos** en tiempo real a los sistemas del edificio (ej. *Building Management System - BMS*).
+---
+
+## Arquitectura del modelo de IA
+
+El modelo utiliza una red neuronal secuencial de tres capas densas:
+
+```js
+const model = tf.sequential();
+model.add(tf.layers.dense({ inputShape: [4], units: 8, activation: 'relu' }));
+model.add(tf.layers.dense({ units: 4, activation: 'relu' }));
+model.add(tf.layers.dense({ units: 1, activation: 'linear' }));
+model.compile({ optimizer: 'adam', loss: 'meanSquaredError' });
+# Entrenamiento y Visualización del Modelo de Inteligencia Artificial
+
+## Diagrama de flujo del proceso
+
+```mermaid
+flowchart TD
+    A[Inicio] --> B[Carga de datos de entrada]
+    B --> C[Preprocesamiento de datos]
+    C --> D[Definición del modelo secuencial]
+    D --> E[Configuración del optimizador Adam y función de pérdida]
+    E --> F[Entrenamiento del modelo con TensorFlow]
+    F --> G[Evaluación de precisión]
+    G --> H[Visualización de resultados con Chart.js]
+    H --> I[Fin]
+
