@@ -228,4 +228,4 @@ document.getElementById("limpiarBtn").addEventListener("click", () => {
 
 // ==================== INICIALIZACIÓN ====================
 crearYEntrenarModelo().then(m => modeloIA = m);
-cargarHistorial();
+// cargarHistorial();
