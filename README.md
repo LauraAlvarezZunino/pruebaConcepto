@@ -27,7 +27,8 @@ La aplicación:
 
 ## Arquitectura del modelo de IA
 
-El modelo utiliza una red neuronal secuencial de tres capas densas:
+El modelo utiliza una **red neuronal secuencial de tres capas densas**, lo que significa que cada neurona de una capa está conectada con todas las neuronas de la siguiente capa.  
+Este tipo de arquitectura es ideal para problemas de **regresión**, como la predicción del consumo energético.
 
 ```js
 const model = tf.sequential();
@@ -35,11 +36,9 @@ model.add(tf.layers.dense({ inputShape: [4], units: 8, activation: 'relu' }));
 model.add(tf.layers.dense({ units: 4, activation: 'relu' }));
 model.add(tf.layers.dense({ units: 1, activation: 'linear' }));
 model.compile({ optimizer: 'adam', loss: 'meanSquaredError' });
-# Entrenamiento y Visualización del Modelo de Inteligencia Artificial
 
-## Diagrama de flujo del proceso
 
-```mermaid
+```
 flowchart TD
     A[Inicio] --> B[Carga de datos de entrada]
     B --> C[Preprocesamiento de datos]
