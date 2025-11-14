@@ -124,29 +124,9 @@ const grafico = new Chart(ctx, {
       backgroundColor: []
     }]
   },
-
   options: {
-    scales: {
-        x: {
-            ticks: {
-                display: false,  // ⬅️ Oculta etiquetas DEL EJE X
-            }
-        },
-        y: {
-            beginAtZero: true
-        }
-    },
-    plugins: {
-        legend: {
-            display: false
-        },
-        tooltip: {
-            enabled: true 
-        }
-    }
-}
-
-
+    scales: { y: { beginAtZero: true } }
+  }
 });
 
 // ==================== HISTORIAL ====================
@@ -219,7 +199,7 @@ document.getElementById("predecirBtn").addEventListener("click", async () => {
   document.getElementById("mensajeConsumo").textContent = mensajeConsumo(valorDiario);
 
   // actualizar gráfico
-const etiqueta = `${coords.nombre} | ${temp.toFixed(1)}°C | Día ${dia} | Hora ${hora} | ${personas} personas`;
+ const etiqueta = `${coords.nombre} | ${temp.toFixed(1)}°C | Día ${dia} | Hora ${hora} | ${personas} personas`;
 
 grafico.data.labels.push(etiqueta);
 grafico.data.datasets[0].data.push(valorDiario.toFixed(2));
