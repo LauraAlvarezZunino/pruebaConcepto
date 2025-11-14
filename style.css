@@ -40,7 +40,7 @@ p {
   border-radius: 15px;
   padding: 10px 10px;
   max-width: 700px;
-  min-height: 500px;         /* 🔹 da altura para que el centrado se note */
+  min-height: 500px;         /*  da altura para que el centrado se note */
   margin: 0 auto 30px auto;
   box-shadow: 0 4px 15px rgba(27, 73, 101, 0.1);
 }
