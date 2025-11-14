@@ -223,7 +223,7 @@ document.getElementById("mensajeConsumo").textContent = mensajeConsumo(valorHora
  const etiqueta = `${coords.nombre} | ${temp.toFixed(1)}°C | Día ${dia} | Hora ${hora} | ${personas} personas`;
 
 grafico.data.labels.push(etiqueta);
-grafico.data.datasets[0].data.push(valorHora.toFixed(2));
+grafico.data.datasets[0].data.push(valorHora);
 grafico.data.datasets[0].backgroundColor.push(color);
 grafico.update();
 
