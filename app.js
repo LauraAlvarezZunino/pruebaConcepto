@@ -4,11 +4,11 @@ const barra = document.getElementById('barraProgreso');
 const barraInner = barra.querySelector('div');
 const estadoModelo = document.getElementById('estadoModelo');
 
-// ==================== FUNCIONES DE CLASIFICACIÓN ====================
+// ==================== CLASIFICACIÓN ====================
 function colorPorConsumo(valor) {
-  if (valor < 0.8) return 'rgba(54, 235, 54, 0.6)';   // bajo
-  if (valor < 1.5) return 'rgba(235, 235, 54, 0.6)';  // medio
-  return 'rgba(235, 54, 54, 0.6)';                    // alto
+  if (valor < 0.8) return 'rgba(54, 235, 54, 0.6)';
+  if (valor < 1.5) return  'rgba(232, 197, 71, 0.7)';
+  return 'rgba(235, 54, 54, 0.6)';
 }
 
 function mensajeConsumo(valor) {
@@ -17,8 +17,7 @@ function mensajeConsumo(valor) {
   return "Consumo alto ❌";
 }
 
-
-// ==================== API DE GEOLOCALIZACIÓN ====================
+// ==================== GEOLOCALIZACIÓN ====================
 async function obtenerCoordenadas(ciudad) {
   try {
     const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(ciudad)}&count=1`;
@@ -29,40 +28,39 @@ async function obtenerCoordenadas(ciudad) {
       const { latitude, longitude, name, country } = datos.results[0];
       return { lat: latitude, lon: longitude, nombre: `${name}, ${country}` };
     } else return null;
+
   } catch (error) {
     console.error("Error al obtener coordenadas:", error);
     return null;
   }
 }
 
-// ==================== API DE CLIMA ====================
-async function obtenerTemperatura(lat, lon) {
+// ==================== CLIMA POR DÍA Y HORA ====================
+// Día 1 = MAÑANA, 2 = PASADO, etc.
+async function obtenerTemperaturaPronostico(lat, lon, dia, hora) {
   try {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
-    const respuesta = await fetch(url);
-    const datos = await respuesta.json();
-    return datos.current_weather?.temperature ?? null;
+    const hoy = new Date();
+
+    // día 1 es mañana
+    const fecha = new Date(hoy.getTime() + dia * 24 * 60 * 60 * 1000);
+    const fechaStr = fecha.toISOString().split("T")[0];
+
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m&start_date=${fechaStr}&end_date=${fechaStr}&timezone=America/Argentina/Buenos_Aires`;
+
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (!data.hourly || !data.hourly.temperature_2m) {
+      console.error("No hay datos horarios para:", fechaStr);
+      return null;
+    }
+
+    return data.hourly.temperature_2m[hora];
+
   } catch (error) {
-    console.error("Error al obtener datos del clima:", error);
+    console.error("Error al obtener temperatura:", error);
     return null;
   }
-}
-
-async function obtenerTemperaturaPronostico(lat, lon, dia) {
-  const hoy = new Date();
-  const fecha = new Date(hoy.getTime() + (dia - 1) * 24 * 60 * 60 * 1000);
-  const fechaStr = fecha.toISOString().split('T')[0];
-
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m&start_date=${fechaStr}&end_date=${fechaStr}&timezone=America/Argentina/Buenos_Aires`;
-  const res = await fetch(url);
-  const data = await res.json();
-
-  if (!data.hourly || !data.hourly.temperature_2m) {
-    console.error("No hay datos de temperatura disponibles para esta fecha:", fechaStr);
-    return 20; // valor por defecto
-  }
-
-  return data.hourly.temperature_2m[12]; // temperatura mediodía
 }
 
 // ==================== CREAR Y ENTRENAR MODELO ====================
@@ -72,31 +70,24 @@ async function crearYEntrenarModelo() {
 
   const xsData = [];
   const ysData = [];
+
   for (let d = 0; d < 30; d++) {
     for (let h = 0; h < 24; h++) {
+
       const temp = Math.random() * 20 + 10;
       const personas = Math.random() * 30 + 5;
       const diaSemana = (d % 7) + 1;
+
       xsData.push([temp, h, personas, diaSemana]);
-      let consumo = 0.3;  // consumo base por hora en kWh
 
-// efecto de temperatura
-consumo += temp * 0.03;
+      let consumo = 0.3;
+      consumo += temp * 0.03;
+      consumo += personas * 0.02;
+      if (h >= 18 && h <= 23) consumo += 0.7;
+      if (h >= 0 && h <= 5) consumo -= 0.2;
 
-// efecto de cantidad de personas
-consumo += personas * 0.02;
-
-// horas pico altas (18-23)
-if (h >= 18 && h <= 23) consumo += 0.7;
-
-// horas muy bajas (madrugada)
-if (h >= 0 && h <= 5) consumo -= 0.2;
-
-// aseguramos que no salga negativo
-consumo = Math.max(consumo, 0.1);
-
-ysData.push([consumo]);
-
+      consumo = Math.max(consumo, 0.1);
+      ysData.push([consumo]);
     }
   }
 
@@ -143,31 +134,29 @@ const grafico = new Chart(ctx, {
       backgroundColor: []
     }]
   },
- options: {
-  scales: {
-    y: { beginAtZero: true }
-  },
-  plugins: {
-    tooltip: {
-      callbacks: {
-        label: function (context) {
-          const index = context.dataIndex;
-          const info = context.chart.infoExtra[index];
-
-          return [
-            `Ciudad: ${info.ciudad}`,
-            `Temp: ${info.temperatura}°C`,
-            `Día: ${info.dia}`,
-            `Hora: ${info.hora}`,
-            `Personas: ${info.personas}`,
-            `Consumo: ${info.consumo} kWh/hora`
-          ];
+  options: {
+    scales: {
+      y: { beginAtZero: true }
+    },
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function (context) {
+            const index = context.dataIndex;
+            const info = context.chart.infoExtra[index];
+            return [
+              `Ciudad: ${info.ciudad}`,
+              `Temp: ${info.temperatura}°C`,
+              `Día: ${info.dia}`,
+              `Hora: ${info.hora}`,
+              `Personas: ${info.personas}`,
+              `Consumo: ${info.consumo} kWh/hora`
+            ];
+          }
         }
       }
     }
   }
-}
-
 });
 
 // ==================== HISTORIAL ====================
@@ -196,6 +185,7 @@ document.getElementById("borrarHistorialBtn")?.addEventListener("click", () => {
   grafico.data.labels = [];
   grafico.data.datasets[0].data = [];
   grafico.data.datasets[0].backgroundColor = [];
+  grafico.infoExtra = [];   // ← FIX IMPORTANTE
   grafico.update();
 });
 
@@ -213,52 +203,48 @@ document.getElementById("predecirBtn").addEventListener("click", async () => {
     return;
   }
 
-  if (!ciudad) { alert("Por favor ingresa el nombre de una ciudad."); return; }
+  if (!ciudad) { alert("Por favor ingresa una ciudad."); return; }
 
-  // Obtener coordenadas
   const coords = await obtenerCoordenadas(ciudad);
-  if (!coords) { alert("No se pudo encontrar esa ciudad."); return; }
+  if (!coords) { alert("No se encontró esa ciudad."); return; }
 
-  // Obtener temperatura actual
-  let temp = await obtenerTemperatura(coords.lat, coords.lon);
+  // === Temperatura según día (1=mañana, 2=pasado…) y hora ===
+  let temp = await obtenerTemperaturaPronostico(coords.lat, coords.lon, dia, hora);
+
   if (temp === null) {
-    alert("No se pudo obtener la temperatura actual. Se usará 22°C por defecto.");
+    alert("No se pudo obtener la temperatura exacta. Se usará 22°C por defecto.");
     temp = 22;
   }
 
-  // Predecir consumo
+  // === IA ===
   const entrada = tf.tensor2d([[temp, hora, personas, dia]]);
   const prediccion = modeloIA.predict(entrada);
   const valorHora = (await prediccion.data())[0];
 
-
   // Mostrar resultado
   document.getElementById("resultado").textContent =
-  `Ciudad: ${coords.nombre} | Temp: ${temp}°C | Consumo estimado: ${valorHora.toFixed(2)} kWh/hora`;
+    `Ciudad: ${coords.nombre} | Temp: ${temp.toFixed(1)}°C | Consumo: ${valorHora.toFixed(2)} kWh/h`;
 
- const color = colorPorConsumo(valorHora);
-document.getElementById("resultado").style.color = color;
-document.getElementById("mensajeConsumo").textContent = mensajeConsumo(valorHora);
+  const color = colorPorConsumo(valorHora);
+  document.getElementById("resultado").style.color = color;
+  document.getElementById("mensajeConsumo").textContent = mensajeConsumo(valorHora);
 
+  // Gráfico
+  grafico.data.labels.push(`Predicción ${grafico.data.labels.length + 1}`);
+  grafico.data.datasets[0].data.push(valorHora);
+  grafico.data.datasets[0].backgroundColor.push(color);
 
-  // actualizar gráfico
- const etiqueta = `${coords.nombre} | ${temp.toFixed(1)}°C | Día ${dia} | Hora ${hora} | ${personas} personas`;
+  if (!grafico.infoExtra) grafico.infoExtra = [];
+  grafico.infoExtra.push({
+    ciudad: coords.nombre,
+    temperatura: temp.toFixed(1),
+    dia: dia,
+    hora: hora,
+    personas: personas,
+    consumo: valorHora.toFixed(2)
+  });
 
-grafico.data.labels.push(`Predicción ${grafico.data.labels.length + 1}`);
-grafico.data.datasets[0].data.push(valorHora);
-grafico.data.datasets[0].backgroundColor.push(color);
-
-if (!grafico.infoExtra) grafico.infoExtra = [];
-grafico.infoExtra.push({
-  ciudad: coords.nombre,
-  temperatura: temp.toFixed(1),
-  dia: dia,
-  hora: hora,
-  personas: personas,
-  consumo: valorHora.toFixed(2)
-});
-
-grafico.update();
+  grafico.update();
 
   entrada.dispose();
   prediccion.dispose();
@@ -276,9 +262,9 @@ document.getElementById("limpiarBtn").addEventListener("click", () => {
   grafico.data.labels = [];
   grafico.data.datasets[0].data = [];
   grafico.data.datasets[0].backgroundColor = [];
+  grafico.infoExtra = [];   // ← Necesario
   grafico.update();
 });
 
 // ==================== INICIALIZACIÓN ====================
 crearYEntrenarModelo().then(m => modeloIA = m);
-// cargarHistorial();
