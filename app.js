@@ -6,16 +6,17 @@ const estadoModelo = document.getElementById('estadoModelo');
 
 // ==================== FUNCIONES DE CLASIFICACIÓN ====================
 function colorPorConsumo(valor) {
-  if (valor <= 13.33) return 'rgba(54, 235, 54, 0.6)'; // verde
-  if (valor <= 20) return 'rgba(235, 235, 54, 0.6)';  // amarillo
-  return 'rgba(235, 54, 54, 0.6)';                     // rojo
+  if (valor < 0.8) return 'rgba(54, 235, 54, 0.6)';   // bajo
+  if (valor < 1.5) return 'rgba(235, 235, 54, 0.6)';  // medio
+  return 'rgba(235, 54, 54, 0.6)';                    // alto
 }
 
 function mensajeConsumo(valor) {
-  if (valor <= 13.33) return "Consumo bajo ✅";
-  if (valor <= 20) return "Consumo medio ⚠️";
+  if (valor < 0.8) return "Consumo bajo ✅";
+  if (valor < 1.5) return "Consumo medio ⚠️";
   return "Consumo alto ❌";
 }
+
 
 // ==================== API DE GEOLOCALIZACIÓN ====================
 async function obtenerCoordenadas(ciudad) {
@@ -77,7 +78,25 @@ async function crearYEntrenarModelo() {
       const personas = Math.random() * 30 + 5;
       const diaSemana = (d % 7) + 1;
       xsData.push([temp, h, personas, diaSemana]);
-      ysData.push([temp * 10 + personas * 5 + 50]);
+      let consumo = 0.3;  // consumo base por hora en kWh
+
+// efecto de temperatura
+consumo += temp * 0.03;
+
+// efecto de cantidad de personas
+consumo += personas * 0.02;
+
+// horas pico altas (18-23)
+if (h >= 18 && h <= 23) consumo += 0.7;
+
+// horas muy bajas (madrugada)
+if (h >= 0 && h <= 5) consumo -= 0.2;
+
+// aseguramos que no salga negativo
+consumo = Math.max(consumo, 0.1);
+
+ysData.push([consumo]);
+
     }
   }
 
@@ -188,21 +207,23 @@ document.getElementById("predecirBtn").addEventListener("click", async () => {
   // Predecir consumo
   const entrada = tf.tensor2d([[temp, hora, personas, dia]]);
   const prediccion = modeloIA.predict(entrada);
-  const valorMensual = (await prediccion.data())[0];
-  const valorDiario = valorMensual / 30;
+  const valorHora = (await prediccion.data())[0];
+
 
   // Mostrar resultado
-  const color = colorPorConsumo(valorDiario);
   document.getElementById("resultado").textContent =
-    `Ciudad: ${coords.nombre} | Temp: ${temp}°C | Consumo estimado: ${valorDiario.toFixed(2)} kWh/día`;
-  document.getElementById("resultado").style.color = color;
-  document.getElementById("mensajeConsumo").textContent = mensajeConsumo(valorDiario);
+  `Ciudad: ${coords.nombre} | Temp: ${temp}°C | Consumo estimado: ${valorHora.toFixed(2)} kWh/hora`;
+
+ const color = colorPorConsumo(valorHora);
+document.getElementById("resultado").style.color = color;
+document.getElementById("mensajeConsumo").textContent = mensajeConsumo(valorHora);
+
 
   // actualizar gráfico
  const etiqueta = `${coords.nombre} | ${temp.toFixed(1)}°C | Día ${dia} | Hora ${hora} | ${personas} personas`;
 
 grafico.data.labels.push(etiqueta);
-grafico.data.datasets[0].data.push(valorDiario.toFixed(2));
+grafico.data.datasets[0].data.push(valorHora.toFixed(2));
 grafico.data.datasets[0].backgroundColor.push(color);
 grafico.update();
 
