@@ -143,9 +143,31 @@ const grafico = new Chart(ctx, {
       backgroundColor: []
     }]
   },
-  options: {
-    scales: { y: { beginAtZero: true } }
+ options: {
+  scales: {
+    y: { beginAtZero: true }
+  },
+  plugins: {
+    tooltip: {
+      callbacks: {
+        label: function (context) {
+          const index = context.dataIndex;
+          const info = context.chart.infoExtra[index];
+
+          return [
+            `Ciudad: ${info.ciudad}`,
+            `Temp: ${info.temperatura}°C`,
+            `Día: ${info.dia}`,
+            `Hora: ${info.hora}`,
+            `Personas: ${info.personas}`,
+            `Consumo: ${info.consumo} kWh/hora`
+          ];
+        }
+      }
+    }
   }
+}
+
 });
 
 // ==================== HISTORIAL ====================
@@ -222,9 +244,20 @@ document.getElementById("mensajeConsumo").textContent = mensajeConsumo(valorHora
   // actualizar gráfico
  const etiqueta = `${coords.nombre} | ${temp.toFixed(1)}°C | Día ${dia} | Hora ${hora} | ${personas} personas`;
 
-grafico.data.labels.push(etiqueta);
+grafico.data.labels.push(`Predicción ${grafico.data.labels.length + 1}`);
 grafico.data.datasets[0].data.push(valorHora);
 grafico.data.datasets[0].backgroundColor.push(color);
+
+if (!grafico.infoExtra) grafico.infoExtra = [];
+grafico.infoExtra.push({
+  ciudad: coords.nombre,
+  temperatura: temp.toFixed(1),
+  dia: dia,
+  hora: hora,
+  personas: personas,
+  consumo: valorHora.toFixed(2)
+});
+
 grafico.update();
 
   entrada.dispose();
